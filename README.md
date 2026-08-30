@@ -1,60 +1,65 @@
-# Fanne Linux
+# Fix: malformed /etc/apt/sources.list on `make iso`
 
-![Fanne Linux](assets/branding/fanne-logo-black.png)
+## Por quê
 
-Fanne Linux is a rolling desktop-focused Linux distribution built from Devuan
-Ceres (unstable), on sysvinit instead of systemd.
-The project aims to provide a polished, dependable system that remains easy to
-understand, rebuild, and modify.
+`docs/architecture.md` do fanne-linux define o projeto como um derivado do
+**Devuan Ceres** (sysvinit + elogind), mas `auto/config` (ou o local
+equivalente onde `lb config` era chamado) não passava `--mode devuan`, e/ou
+misturava mirror do Devuan (`http://deb.devuan.org/merged`) com convenções
+de área de arquivo do Debian (ex. `non-free-firmware`, que não existe no
+pool "merged" do Devuan). Isso faz o `live-build` escrever uma linha
+`deb ...` inválida em `/etc/apt/sources.list` do chroot, e o `apt update`
+falha com:
 
-> [!IMPORTANT]
-> Fanne Linux is in its bootstrap stage. The current repository produces a
-> development live image and is not ready for daily use.
-
-## Current foundation
-
-- Devuan Ceres (unstable) rolling base, sysvinit instead of systemd
-- Minimal live image by default; LibreOffice, GParted, Bluetooth, and other
-  extras are opt-in choices in the Calamares installer instead of being
-  baked into the ISO (this does mean choosing them requires an internet
-  connection at install time)
-- XFCE desktop
-- Hybrid BIOS/UEFI live ISO for AMD64 computers
-- Fanne-branded Calamares graphical installer
-- NetworkManager, PipeWire, Flatpak, and common desktop utilities
-- English (United States) defaults
-- Fanne-branded BIOS/UEFI menus, Plymouth, LightDM, and XFCE desktop
-- Reproducible build configuration based on Debian/Devuan `live-build`
-
-## Build an image
-
-Building requires a Devuan Ceres host or container with `live-build`, `make`,
-`debootstrap`, `xorriso`, and `devuan-keyring` installed.
-
-```sh
-sudo apt update
-sudo apt install live-build make debootstrap xorriso squashfs-tools devuan-keyring
-sudo make iso
+```
+E: Malformed entry 1 in list file /etc/apt/sources.list (URI parse)
 ```
 
-The finished image and its SHA-256 checksum are written to `dist/`.
+## O que este pacote faz
 
-For build options and virtual-machine testing instructions, read
-[`docs/building.md`](docs/building.md).
+Substitui/adiciona `auto/config`, `auto/build` e `auto/clean` com uma
+configuração explícita para Devuan Ceres:
 
-## Project status
+- `--mode devuan` explícito
+- `--distribution ceres`
+- mirrors consistentes (`deb.devuan.org/merged`) em bootstrap, chroot,
+  security e binary
+- `--archive-areas main` (sem componentes que não existem no Devuan)
 
-The current milestone is focused on producing a clean, bootable, installable,
-and consistently branded rolling image before adding Fanne-owned system
-components. See [`docs/roadmap.md`](docs/roadmap.md) for the planned stages.
+## Como aplicar
 
-## Contributing
+1. Copie os três arquivos para a raiz do repositório, dentro de `auto/`:
 
-Contributions are welcome. Read [`CONTRIBUTING.md`](CONTRIBUTING.md) before
-opening a pull request.
+   ```
+   cp auto/config auto/build auto/clean /caminho/para/fanne-linux/auto/
+   chmod +x /caminho/para/fanne-linux/auto/{config,build,clean}
+   ```
 
-## License
+2. Limpe qualquer estado de build anterior (importante — configs antigas
+   ficam cacheadas):
 
-Repository-owned source code and configuration are licensed under the
-[Apache License 2.0](LICENSE). Included Debian/Devuan packages keep their
-respective upstream licenses.
+   ```
+   cd /caminho/para/fanne-linux
+   sudo make clean || sudo lb clean --purge
+   ```
+
+3. Rode o build novamente:
+
+   ```
+   sudo make iso
+   ```
+
+4. Se `scripts/build.sh` chama `lb config` diretamente com suas próprias
+   flags (em vez de deixar o `auto/config` ser lido), ajuste esse script
+   para usar `lb config noauto` (para que ele leia `auto/config`) ou copie
+   as mesmas flags de mirror/distribuição para lá.
+
+## Ajustes que você deve revisar
+
+- `ARCHIVE_AREAS`, pacotes de firmware, e a lista em
+  `config/package-lists/` podem precisar de ajuste fino conforme o que o
+  projeto já tinha configurado.
+- Se o projeto realmente pretende voltar a ser baseado em Debian Sid puro
+  (ao invés de Devuan), a correção é a inversa: manter `--mode debian`,
+  usar mirror `deb.debian.org`, distribuição `sid`, e áreas
+  `main contrib non-free non-free-firmware`. Não dá pra misturar os dois.

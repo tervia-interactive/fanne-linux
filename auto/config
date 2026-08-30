@@ -1,37 +1,56 @@
 #!/bin/sh
+set -e
 
-set -eu
+# Fanne Linux — auto/config
+#
+# This script is the single source of truth for how `lb config` is invoked.
+# It replaces an implicit/default `--mode debian` invocation (which produced
+# a malformed /etc/apt/sources.list when combined with a Devuan mirror and
+# the "ceres" suite) with an explicit Devuan configuration, matching what
+# docs/architecture.md describes: Fanne Linux is a Devuan Ceres derivative
+# (sysvinit + elogind), not a Debian Sid image.
+#
+# Usage: run `lb config` from the repository root; live-build sources this
+# file automatically. Do not call this script directly.
 
-REPOSITORY_ROOT=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)
-# shellcheck source=../version
-. "$REPOSITORY_ROOT/version"
+MIRROR="http://deb.devuan.org/merged"
+DISTRIBUTION="ceres"          # Devuan's unstable, tracks Debian Sid
+ARCHITECTURE="amd64"
+ARCHIVE_AREAS="main"          # Devuan's merged pool has no non-free-firmware
 
-FANNE_VOLUME_ID=$(printf '%s' "FANNE_${FANNE_CODENAME}_${FANNE_VERSION}" | tr '[:lower:].' '[:upper:]_')
-
-# NOTE: --archive-areas assumes Devuan Ceres mirrors the Debian Sid split of
-# non-free-firmware out of non-free. If a `make check`/build fails to find
-# a package, first check `apt-cache policy` against deb.devuan.org/merged
-# and adjust this list before touching anything else.
 lb config noauto \
     --mode devuan \
-    --distribution ceres \
-    --archive-areas "main contrib non-free-firmware" \
-    --mirror-bootstrap "https://deb.devuan.org/merged/" \
-    --mirror-chroot "https://deb.devuan.org/merged/" \
-    --mirror-binary "https://deb.devuan.org/merged/" \
-    --keyring-packages devuan-keyring \
-    --debootstrap-options "--variant=minbase" \
-    --architectures amd64 \
-    --security false \
-    --updates false \
-    --backports false \
-    --cache false \
+    --distribution "${DISTRIBUTION}" \
+    --architectures "${ARCHITECTURE}" \
+    --archive-areas "${ARCHIVE_AREAS}" \
+    \
+    --parent-mirror-bootstrap "${MIRROR}" \
+    --mirror-bootstrap "${MIRROR}" \
+    --parent-mirror-chroot "${MIRROR}" \
+    --mirror-chroot "${MIRROR}" \
+    --parent-mirror-chroot-security "${MIRROR}" \
+    --mirror-chroot-security "${MIRROR}" \
+    --parent-mirror-binary "${MIRROR}" \
+    --mirror-binary "${MIRROR}" \
+    --parent-mirror-binary-security "${MIRROR}" \
+    --mirror-binary-security "${MIRROR}" \
+    \
+    --security true \
+    --updates true \
+    --apt-indices false \
+    --apt-recommends false \
+    --apt-source-archives false \
+    \
     --binary-images iso-hybrid \
-    --bootloaders "syslinux,grub-efi" \
+    --bootloaders "grub-pc grub-efi" \
+    --uefi-secure-boot disable \
     --debian-installer none \
-    --image-name fanne-linux \
-    --iso-application "Fanne Linux ${FANNE_CODENAME} ${FANNE_VERSION}" \
+    \
+    --linux-packages "linux-image" \
+    --memtest none \
+    \
+    --iso-application "Fanne Linux" \
     --iso-publisher "Tervia Interactive" \
-    --iso-volume "$FANNE_VOLUME_ID" \
-    --bootappend-live "boot=live components username=fanne user-fullname=Fanne hostname=fanne locales=en_US.UTF-8 keyboard-layouts=us timezone=UTC" \
+    --iso-volume "Fanne Linux" \
+    \
     "${@}"

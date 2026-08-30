@@ -18,5 +18,7 @@ for template in config/includes.chroot/etc/os-release config/includes.chroot/etc
         mv "${template}.orig" "$template"
     fi
 done
+# (This loop is intentionally guarded with an if/fi rather than `test && mv`
+# so a missing .orig file — the normal case — never trips `set -e`.)
 
 echo 'Generated live-build state removed.'

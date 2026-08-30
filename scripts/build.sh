@@ -34,10 +34,17 @@ FANNE_CODENAME_LOWER=$(printf '%s' "$FANNE_CODENAME" | tr '[:upper:]' '[:lower:]
 TEMPLATED_FILES='config/includes.chroot/etc/os-release config/includes.chroot/etc/issue'
 cleanup() {
     for template in $TEMPLATED_FILES; do
-        [ -f "${template}.orig" ] && mv "${template}.orig" "$template"
+        if [ -f "${template}.orig" ]; then
+            mv "${template}.orig" "$template"
+        fi
     done
 }
 trap cleanup EXIT INT TERM
+
+# clean.sh must run before we patch the templated files: it restores any
+# leftover *.orig backups from a previous (interrupted) run, and it must
+# not run afterwards or it will immediately undo the patching below.
+./scripts/clean.sh
 
 for template in $TEMPLATED_FILES; do
     cp "$template" "${template}.orig"
@@ -49,7 +56,6 @@ for template in $TEMPLATED_FILES; do
         "$template"
 done
 
-./scripts/clean.sh
 lb config
 lb build 2>&1 | tee build.log
 

@@ -4,10 +4,18 @@ set -eu
 
 SPLASH='config/bootloaders/fanne-splash.png'
 
+# Current live-build releases run binary hooks from inside the binary tree,
+# while older releases run them from the project root.
+if [ -d binary ]; then
+    BINARY_ROOT='binary'
+else
+    BINARY_ROOT='.'
+fi
+
 for target in \
-    binary/isolinux/splash.png \
-    binary/boot/grub/splash.png \
-    binary/boot/grub/live-theme/splash.png
+    "$BINARY_ROOT/isolinux/splash.png" \
+    "$BINARY_ROOT/boot/grub/splash.png" \
+    "$BINARY_ROOT/boot/grub/live-theme/splash.png"
 do
     if [ -d "$(dirname "$target")" ]; then
         cp "$SPLASH" "$target"
@@ -15,12 +23,12 @@ do
 done
 
 # Remove upstream distribution names from generated BIOS and UEFI menus.
-find binary -type f \( -name '*.cfg' -o -name '*.txt' \) -exec \
+find "$BINARY_ROOT" -type f \( -name '*.cfg' -o -name '*.txt' \) -exec \
     sed -i \
         -e 's/Debian GNU\/Linux/Fanne Linux/g' \
         -e 's/Debian Live/Fanne Linux/g' \
         -e 's/Debian/Fanne Linux/g' \
         {} +
 
-mkdir -p binary/.disk
-printf '%s\n' 'Fanne Linux Unstable - Official AMD64 Live Image' > binary/.disk/info
+mkdir -p "$BINARY_ROOT/.disk"
+printf '%s\n' 'Fanne Linux Unstable - Official AMD64 Live Image' > "$BINARY_ROOT/.disk/info"

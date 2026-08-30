@@ -1,0 +1,26 @@
+#!/bin/sh
+
+set -eu
+
+SPLASH='config/bootloaders/fanne-splash.png'
+
+for target in \
+    binary/isolinux/splash.png \
+    binary/boot/grub/splash.png \
+    binary/boot/grub/live-theme/splash.png
+do
+    if [ -d "$(dirname "$target")" ]; then
+        cp "$SPLASH" "$target"
+    fi
+done
+
+# Remove upstream distribution names from generated BIOS and UEFI menus.
+find binary -type f \( -name '*.cfg' -o -name '*.txt' \) -exec \
+    sed -i \
+        -e 's/Debian GNU\/Linux/Fanne Linux/g' \
+        -e 's/Debian Live/Fanne Linux/g' \
+        -e 's/Debian/Fanne Linux/g' \
+        {} +
+
+mkdir -p binary/.disk
+printf '%s\n' 'Fanne Linux Unstable - Official AMD64 Live Image' > binary/.disk/info

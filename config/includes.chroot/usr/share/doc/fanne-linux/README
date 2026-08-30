@@ -1,6 +1,6 @@
 Fanne Linux development image
 
-This is an early development build based on Debian 13. It has not completed
+This is an early rolling build based on Debian Unstable. It has not completed
 release qualification and should not be used on a machine containing important
 data without a verified backup.
 

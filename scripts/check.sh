@@ -8,7 +8,11 @@ cd "$REPOSITORY_ROOT"
 required_files='auto/config
 config/package-lists/fanne.list.chroot
 config/hooks/live/010-fanne-system.hook.chroot
+config/hooks/live/020-fanne-boot-branding.hook.binary
 config/includes.chroot/etc/os-release
+config/includes.chroot/etc/calamares/branding/fanne/branding.desc
+config/includes.chroot/usr/share/backgrounds/fanne/fanne-default.png
+config/bootloaders/fanne-splash.png
 docs/architecture.md
 docs/building.md'
 
@@ -22,6 +26,19 @@ done
 for script in auto/config config/hooks/live/010-fanne-system.hook.chroot scripts/build.sh scripts/clean.sh scripts/check.sh; do
     sh -n "$script"
 done
+
+sh -n config/hooks/live/020-fanne-boot-branding.hook.binary
+sh -n config/includes.chroot/usr/local/bin/fanne-installer
+
+if ! grep -q -- '--distribution sid' auto/config; then
+    echo 'The image is not configured to use Debian Sid.' >&2
+    exit 1
+fi
+
+if grep -RInE 'branding:[[:space:]]*debian|Name=Install Debian' config --exclude='010-fanne-system.hook.chroot'; then
+    echo 'Visible Debian installer branding found.' >&2
+    exit 1
+fi
 
 if grep -RInE '(^|[^[:alpha:]])(pt_BR|Portuguese|Português)([^[:alpha:]]|$)' \
     README.md CONTRIBUTING.md docs auto config; then

@@ -11,9 +11,9 @@
 
 ## Milestone 1: Identity
 
-- [ ] Create the official logo, color palette, and typography rules.
-- [ ] Package Fanne wallpapers and desktop defaults.
-- [ ] Replace temporary Debian Calamares branding with Fanne settings.
+- [x] Add the official Fanne logo assets and initial color palette.
+- [x] Package the first Fanne wallpaper and desktop defaults.
+- [x] Replace temporary Debian Calamares branding with Fanne settings.
 - [ ] Add a first-boot welcome application.
 
 ## Milestone 2: Hardware quality

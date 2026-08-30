@@ -1,0 +1,33 @@
+---
+componentName: fanne
+welcomeStyleCalamares: false
+welcomeExpandingLogo: true
+windowExpanding: normal
+windowSize: 920px,630px
+windowPlacement: center
+
+strings:
+    productName: "Fanne Linux"
+    shortProductName: "Fanne"
+    version: "Unstable"
+    shortVersion: "Sid"
+    versionedName: "Fanne Linux Unstable"
+    shortVersionedName: "Fanne Unstable"
+    bootloaderEntryName: "Fanne Linux"
+    productUrl: "https://github.com/tervia-interactive/fanne-linux"
+    supportUrl: "https://github.com/tervia-interactive/fanne-linux/issues"
+    knownIssuesUrl: "https://github.com/tervia-interactive/fanne-linux/issues"
+    releaseNotesUrl: "https://github.com/tervia-interactive/fanne-linux/releases"
+
+images:
+    productIcon: "fanne-mark.png"
+    productLogo: "fanne-mark.png"
+    productWelcome: "fanne-welcome.png"
+
+slideshow: [ "fanne-slide.png" ]
+
+style:
+    sidebarBackground: "#07170b"
+    sidebarText: "#dce9df"
+    sidebarTextSelect: "#ffffff"
+    sidebarTextHighlight: "#008f1d"

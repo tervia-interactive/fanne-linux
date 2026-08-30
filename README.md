@@ -1,6 +1,9 @@
 # Fanne Linux
 
-Fanne Linux is a desktop-focused Linux distribution built from Debian Stable.
+![Fanne Linux](assets/branding/fanne-logo-black.png)
+
+Fanne Linux is a rolling desktop-focused Linux distribution built from Debian
+Unstable.
 The project aims to provide a polished, dependable system that remains easy to
 understand, rebuild, and modify.
 
@@ -10,17 +13,18 @@ understand, rebuild, and modify.
 
 ## Current foundation
 
-- Debian 13 (Trixie) base
+- Debian Unstable (Sid) rolling base
 - XFCE desktop
 - Hybrid BIOS/UEFI live ISO for AMD64 computers
-- Calamares graphical installer
+- Fanne-branded Calamares graphical installer
 - NetworkManager, PipeWire, Flatpak, and common desktop utilities
 - English (United States) defaults
+- Fanne-branded BIOS/UEFI menus, Plymouth, LightDM, and XFCE desktop
 - Reproducible build configuration based on Debian `live-build`
 
 ## Build an image
 
-Building requires a Debian 13 host or container with `live-build`, `make`,
+Building requires a Debian Sid host or container with `live-build`, `make`,
 `debootstrap`, and `xorriso` installed.
 
 ```sh
@@ -36,10 +40,9 @@ For build options and virtual-machine testing instructions, read
 
 ## Project status
 
-The first milestone is intentionally small: produce a clean, bootable,
-installable image before adding extensive visual customization or Fanne-owned
-system components. See [`docs/roadmap.md`](docs/roadmap.md) for the planned
-stages.
+The current milestone is focused on producing a clean, bootable, installable,
+and consistently branded rolling image before adding Fanne-owned system
+components. See [`docs/roadmap.md`](docs/roadmap.md) for the planned stages.
 
 ## Contributing
 

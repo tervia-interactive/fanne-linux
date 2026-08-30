@@ -3,7 +3,7 @@
 ## Base system
 
 Fanne Linux is currently a Debian derivative, not an independent package
-ecosystem. Debian Stable provides the kernel, package manager, security updates,
+ecosystem. Debian Unstable provides the kernel, package manager, rolling updates,
 hardware enablement, and most user-space software. Fanne-owned configuration is
 layered on top through `live-build` includes and hooks.
 
@@ -13,7 +13,7 @@ infrastructure.
 
 ## Image pipeline
 
-1. `live-build` creates a minimal Debian Trixie chroot.
+1. `live-build` creates a minimal Debian Sid chroot.
 2. Package lists add the XFCE desktop, installer, firmware, and selected apps.
 3. Chroot hooks apply Fanne defaults and system identity.
 4. Binary hooks and bootloader tooling create a hybrid BIOS/UEFI ISO.

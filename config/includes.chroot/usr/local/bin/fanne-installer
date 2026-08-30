@@ -1,0 +1,12 @@
+#!/bin/sh
+
+set -eu
+
+# Debian's wrapper contains the integration required to launch Calamares
+# correctly from a live session. Keep it as an implementation detail while
+# exposing only Fanne branding to the user.
+if command -v calamares-install-debian >/dev/null 2>&1; then
+    exec calamares-install-debian "$@"
+fi
+
+exec pkexec calamares "$@"

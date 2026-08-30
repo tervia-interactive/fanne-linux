@@ -1,0 +1,20 @@
+Window.SetBackgroundTopColor(0.01, 0.06, 0.02);
+Window.SetBackgroundBottomColor(0.00, 0.01, 0.00);
+
+logo.image = Image("fanne-logo-white.png");
+logo.sprite = Sprite(logo.image);
+
+fun place_logo()
+{
+    scale = Math.Min(1, Window.GetWidth() * 0.62 / logo.image.GetWidth());
+    scaled_image = logo.image.Scale(logo.image.GetWidth() * scale,
+                                    logo.image.GetHeight() * scale);
+    logo.sprite.SetImage(scaled_image);
+    logo.sprite.SetX(Window.GetWidth() / 2 - scaled_image.GetWidth() / 2);
+    logo.sprite.SetY(Window.GetHeight() / 2 - scaled_image.GetHeight() / 2);
+}
+
+place_logo();
+
+Plymouth.SetRefreshFunction(fun () { place_logo(); });
+Plymouth.SetMessageFunction(fun (message) { });

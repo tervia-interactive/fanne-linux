@@ -2,7 +2,7 @@
 
 ## Requirements
 
-Use a clean Debian 13 AMD64 host or virtual machine. The build downloads several
+Use a clean Debian Sid AMD64 host or the repository's Debian Sid container workflow. The build downloads several
 gigabytes and requires enough free disk space for the package cache, chroot, and
 final image. A practical starting point is 20 GB of free space and 4 GB of RAM.
 

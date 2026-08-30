@@ -10,6 +10,8 @@ live-config
 live-config-systemd
 calamares
 calamares-settings-debian
+plymouth
+plymouth-themes
 
 # Hardware, networking, and audio
 network-manager

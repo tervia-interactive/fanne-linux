@@ -36,12 +36,12 @@ jobs:
           sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
           docker system prune --all --force
           df -h /
-      - name: Build ISO in Debian 13
+      - name: Build ISO in Debian Sid
         run: |
           docker run --rm --privileged \
             --volume "$GITHUB_WORKSPACE:/work" \
             --workdir /work \
-            debian:trixie-slim \
+            debian:sid-slim \
             sh -ec 'apt-get update && apt-get install --yes ca-certificates git live-build make debootstrap xorriso squashfs-tools && make iso'
       - name: Upload development image
         uses: actions/upload-artifact@v4

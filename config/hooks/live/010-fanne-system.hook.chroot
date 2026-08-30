@@ -4,13 +4,71 @@ set -eu
 
 printf '%s\n' 'fanne' > /etc/hostname
 
+if [ -f /etc/os-release ] && [ ! /etc/os-release -ef /usr/lib/os-release ]; then
+    cp /etc/os-release /usr/lib/os-release
+fi
+
 if [ -f /etc/hosts ]; then
     sed -i 's/127\.0\.1\.1.*/127.0.1.1\tfanne/' /etc/hosts
 fi
 
 if command -v update-alternatives >/dev/null 2>&1; then
     update-alternatives --set x-session-manager /usr/bin/startxfce4 || true
+    update-alternatives --install \
+        /usr/share/images/desktop-base/desktop-background \
+        desktop-background \
+        /usr/share/backgrounds/fanne/fanne-default.png \
+        1000
+    update-alternatives --set \
+        desktop-background \
+        /usr/share/backgrounds/fanne/fanne-default.png
 fi
+
+# Replace the settings package's Debian identity with Fanne's branding.
+if [ -f /etc/calamares/settings.conf ]; then
+    sed -i 's/^branding:.*/branding: fanne/' /etc/calamares/settings.conf
+fi
+
+rm -rf /etc/calamares/branding/debian
+rm -f \
+    /etc/xdg/autostart/calamares-desktop-icon.desktop \
+    /usr/share/applications/calamares-install-debian.desktop \
+    /usr/share/applications/install-debian.desktop \
+    /usr/share/pixmaps/install-debian.png
+
+# Replace generic distributor icons used by desktop menus and system dialogs.
+for target in \
+    /usr/share/pixmaps/debian-logo.png \
+    /usr/share/pixmaps/distributor-logo.png \
+    /usr/share/icons/hicolor/256x256/apps/distributor-logo.png
+do
+    mkdir -p "$(dirname "$target")"
+    cp /usr/share/icons/hicolor/256x256/apps/fanne-installer.png "$target"
+done
+
+# Brand the installed system's GRUB and early boot splash.
+if [ -f /etc/default/grub ]; then
+    if grep -q '^GRUB_DISTRIBUTOR=' /etc/default/grub; then
+        sed -i 's/^GRUB_DISTRIBUTOR=.*/GRUB_DISTRIBUTOR="Fanne Linux"/' /etc/default/grub
+    else
+        printf '%s\n' 'GRUB_DISTRIBUTOR="Fanne Linux"' >> /etc/default/grub
+    fi
+    if grep -q '^GRUB_BACKGROUND=' /etc/default/grub; then
+        sed -i 's|^GRUB_BACKGROUND=.*|GRUB_BACKGROUND="/usr/share/backgrounds/fanne/fanne-default.png"|' /etc/default/grub
+    else
+        printf '%s\n' 'GRUB_BACKGROUND="/usr/share/backgrounds/fanne/fanne-default.png"' >> /etc/default/grub
+    fi
+fi
+
+if command -v plymouth-set-default-theme >/dev/null 2>&1; then
+    plymouth-set-default-theme fanne
+    if find /boot -maxdepth 1 -name 'initrd.img-*' -print -quit | grep -q .; then
+        update-initramfs -u -k all
+    fi
+fi
+
+update-desktop-database /usr/share/applications 2>/dev/null || true
+gtk-update-icon-cache -f /usr/share/icons/hicolor 2>/dev/null || true
 
 systemctl enable NetworkManager.service
 systemctl enable lightdm.service

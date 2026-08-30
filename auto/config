@@ -13,7 +13,7 @@ set -e
 # Usage: run `lb config` from the repository root; live-build sources this
 # file automatically. Do not call this script directly.
 
-MIRROR="http://deb.devuan.org/merged"
+MIRROR="http://pkgmaster.devuan.org/merged"
 ARCHITECTURE="amd64"
 # non-free-firmware carries firmware-amd-graphics, firmware-iwlwifi,
 # firmware-realtek, etc. — it does exist on Devuan's merged mirror

@@ -38,9 +38,10 @@ ARCHIVE_AREAS="main contrib non-free-firmware"
 # depends on "systemd | systemd-standalone-sysusers | systemd-sysusers" to
 # process sysusers.d entries. On a sysvinit image we obviously can't
 # satisfy that with systemd itself, so pull in the standalone alternative
-# at bootstrap time via --bootstrap-include below -- without it,
-# debootstrap fails outright with "dependency problems prevent
-# configuration of cron-daemon-common".
+# at bootstrap time via --debootstrap-options below (live-build has no
+# dedicated --bootstrap-include flag; this passes debootstrap's own
+# --include= straight through) -- without it, debootstrap fails outright
+# with "dependency problems prevent configuration of cron-daemon-common".
 lb config noauto \
     --mode devuan \
     --distribution ceres \
@@ -48,7 +49,7 @@ lb config noauto \
     --archive-areas "${ARCHIVE_AREAS}" \
     --initsystem sysvinit \
     --image-name fanne-linux \
-    --bootstrap-include "systemd-standalone-sysusers" \
+    --debootstrap-options "--include=systemd-standalone-sysusers" \
     \
     --parent-mirror-bootstrap "${MIRROR}" \
     --mirror-bootstrap "${MIRROR}" \

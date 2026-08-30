@@ -30,6 +30,7 @@ jobs:
     timeout-minutes: 120
     container:
       image: debian:trixie-slim
+      options: --privileged
     steps:
       - name: Prepare Debian build environment
         run: |

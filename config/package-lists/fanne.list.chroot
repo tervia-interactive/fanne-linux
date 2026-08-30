@@ -80,6 +80,10 @@ file-roller
 flatpak
 
 # System utilities
+# cron is intentionally installed here via apt rather than left to
+# debootstrap's own base set — see the --exclude=cron,cron-daemon-common
+# comment in auto/config for why.
+cron
 sudo
 curl
 wget

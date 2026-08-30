@@ -31,7 +31,10 @@ pipewire
 pipewire-audio
 wireplumber
 pavucontrol
-fwupd
+# fwupd intentionally NOT installed: current fwupd versions depend on real
+# libsystemd0 (bus/device APIs elogind-compat doesn't provide), which
+# conflicts with libpam-elogind/libelogind-compat on Devuan Ceres. Revisit
+# once Devuan's elogind-compat catches up, or offer it as an opt-in extra.
 firmware-linux-free
 firmware-amd-graphics
 firmware-iwlwifi

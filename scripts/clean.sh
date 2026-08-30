@@ -13,4 +13,10 @@ rm -f fanne-linux-amd64.hybrid.iso fanne-linux-amd64.hybrid.iso.zsync
 rm -f fanne-linux-amd64.contents fanne-linux-amd64.packages fanne-linux-amd64.files
 rm -f binary.hybrid.iso binary.hybrid.iso.zsync binary.contents binary.packages binary.files
 
+for template in config/includes.chroot/etc/os-release config/includes.chroot/etc/issue; do
+    if [ -f "${template}.orig" ]; then
+        mv "${template}.orig" "$template"
+    fi
+done
+
 echo 'Generated live-build state removed.'

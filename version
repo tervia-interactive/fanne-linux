@@ -1,0 +1,7 @@
+# Single source of truth for Fanne Linux's own version and codename.
+# Sourced by auto/config and scripts/build.sh — do not add other logic here.
+#
+# Codenames follow rocks/minerals, in step with the version number:
+#   0.x -> Gravel
+FANNE_VERSION="0.1"
+FANNE_CODENAME="Gravel"

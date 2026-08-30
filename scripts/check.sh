@@ -6,10 +6,12 @@ REPOSITORY_ROOT=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)
 cd "$REPOSITORY_ROOT"
 
 required_files='auto/config
+version
 config/package-lists/fanne.list.chroot
 config/hooks/live/010-fanne-system.hook.chroot
 config/hooks/live/020-fanne-boot-branding.hook.binary
 config/includes.chroot/etc/os-release
+config/includes.chroot/etc/issue
 config/includes.chroot/etc/calamares/branding/fanne/branding.desc
 config/includes.chroot/usr/share/backgrounds/fanne/fanne-default.png
 config/bootloaders/fanne-splash.png
@@ -23,12 +25,17 @@ for path in $required_files; do
     fi
 done
 
-for script in auto/config config/hooks/live/010-fanne-system.hook.chroot scripts/build.sh scripts/clean.sh scripts/check.sh; do
+for script in auto/config version config/hooks/live/010-fanne-system.hook.chroot scripts/build.sh scripts/clean.sh scripts/check.sh; do
     sh -n "$script"
 done
 
 sh -n config/hooks/live/020-fanne-boot-branding.hook.binary
 sh -n config/includes.chroot/usr/local/bin/fanne-installer
+
+if ! (. ./version && [ -n "${FANNE_VERSION:-}" ] && [ -n "${FANNE_CODENAME:-}" ]); then
+    echo 'version must define both FANNE_VERSION and FANNE_CODENAME.' >&2
+    exit 1
+fi
 
 if ! grep -q -- '--distribution sid' auto/config; then
     echo 'The image is not configured to use Debian Sid.' >&2

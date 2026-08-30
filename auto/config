@@ -2,6 +2,12 @@
 
 set -eu
 
+REPOSITORY_ROOT=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)
+# shellcheck source=../version
+. "$REPOSITORY_ROOT/version"
+
+FANNE_VOLUME_ID=$(printf '%s' "FANNE_${FANNE_CODENAME}_${FANNE_VERSION}" | tr '[:lower:].' '[:upper:]_')
+
 lb config noauto \
     --mode debian \
     --distribution sid \
@@ -15,8 +21,8 @@ lb config noauto \
     --bootloaders "syslinux,grub-efi" \
     --debian-installer none \
     --image-name fanne-linux \
-    --iso-application "Fanne Linux Unstable" \
+    --iso-application "Fanne Linux ${FANNE_CODENAME} ${FANNE_VERSION}" \
     --iso-publisher "Tervia Interactive" \
-    --iso-volume "FANNE_UNSTABLE" \
+    --iso-volume "$FANNE_VOLUME_ID" \
     --bootappend-live "boot=live components username=fanne user-fullname=Fanne hostname=fanne locales=en_US.UTF-8 keyboard-layouts=us timezone=UTC" \
     "${@}"

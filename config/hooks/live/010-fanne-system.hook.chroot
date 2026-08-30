@@ -70,5 +70,10 @@ fi
 update-desktop-database /usr/share/applications 2>/dev/null || true
 gtk-update-icon-cache -f /usr/share/icons/hicolor 2>/dev/null || true
 
-systemctl enable NetworkManager.service
-systemctl enable lightdm.service
+# On sysvinit, postinst normally already registers these via update-rc.d;
+# this is a belt-and-suspenders re-enable for the live image, and is a
+# no-op (not an error) if the links already exist.
+if command -v update-rc.d >/dev/null 2>&1; then
+    update-rc.d network-manager defaults || true
+    update-rc.d lightdm defaults || true
+fi

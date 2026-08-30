@@ -1,0 +1,21 @@
+#!/bin/sh
+
+set -eu
+
+# Package metadata and downloaded .deb archives from building the chroot
+# have no purpose once the image exists: they just take up space on the
+# live squashfs and the installed system. The release checklist in
+# docs/building.md already expects `apt update && full-upgrade` on a
+# freshly installed system, which repopulates the index anyway.
+apt-get clean
+
+rm -rf /var/lib/apt/lists/*
+mkdir -p /var/lib/apt/lists/partial
+
+rm -rf /var/cache/apt/archives/*.deb
+mkdir -p /var/cache/apt/archives/partial
+
+# Note: we deliberately do NOT touch /usr/share/doc. Each package's
+# .../copyright file there is how Debian/Devuan packaging satisfies
+# license-attribution requirements; stripping it would be a compliance
+# problem, not just a size optimization.

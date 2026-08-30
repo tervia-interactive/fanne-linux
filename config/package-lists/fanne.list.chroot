@@ -1,13 +1,23 @@
 # Fanne Linux desktop
+# NOTE: xfce4-goodies is intentionally NOT installed here — it's a large
+# grab-bag metapackage. A curated slice of it is offered as an opt-in extra
+# through Calamares (see config/includes.chroot/etc/calamares/modules/
+# packagechooser.conf) instead of shipping unconditionally on the live image.
 task-xfce-desktop
-xfce4-goodies
 lightdm
 lightdm-gtk-greeter
+
+# Init system: sysvinit instead of systemd, plus the session-tracking and
+# udev/logind replacements that NetworkManager, PipeWire, XFCE, and Calamares
+# need in place of systemd-logind.
+sysvinit-core
+live-config-sysvinit
+elogind
+libpam-elogind
 
 # Live environment and graphical installer
 live-boot
 live-config
-live-config-systemd
 calamares
 calamares-settings-debian
 plymouth
@@ -21,7 +31,6 @@ pipewire
 pipewire-audio
 wireplumber
 pavucontrol
-blueman
 fwupd
 firmware-linux-free
 firmware-amd-graphics
@@ -29,14 +38,15 @@ firmware-iwlwifi
 firmware-realtek
 
 # Desktop applications
+# LibreOffice, GParted, Bluetooth (blueman), and extra media apps (ristretto,
+# parole) are NOT installed here on purpose — they're multi-hundred-MB to
+# install-but-rarely-used-by-everyone. They're offered as opt-in choices in
+# the Calamares installer instead, so people who don't want them never
+# download or boot them.
 firefox-esr
-libreoffice
 mousepad
-ristretto
-parole
 thunar-archive-plugin
 file-roller
-gparted
 flatpak
 
 # System utilities

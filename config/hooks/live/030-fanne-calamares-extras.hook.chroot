@@ -1,0 +1,54 @@
+#!/bin/sh
+
+set -eu
+
+SETTINGS=/etc/calamares/settings.conf
+
+if [ ! -f "$SETTINGS" ]; then
+    echo "Expected $SETTINGS from calamares-settings-debian, but it's missing." >&2
+    exit 1
+fi
+
+# Idempotent: if a previous run (or a package upgrade re-running hooks)
+# already added it, don't add it twice.
+if grep -qE '^\s*-\s*packagechooser\s*$' "$SETTINGS"; then
+    exit 0
+fi
+
+# Insert "- packagechooser" as a step directly above "- summary", keeping
+# whatever indentation *summary* uses. "summary" is a near-universal
+# Calamares stage name that only ever appears in the `show:` sequence
+# (never in `exec:`), so anchoring on it avoids having to parse the whole
+# YAML document just to find the right list.
+if ! grep -qE '^[[:space:]]*-[[:space:]]*summary[[:space:]]*$' "$SETTINGS"; then
+    cat >&2 <<'EOF'
+Could not find a "- summary" line in /etc/calamares/settings.conf to anchor
+the new "packagechooser" step next to. calamares-settings-debian may have
+changed its settings.conf layout since this hook was written.
+
+Fix: inspect the chroot's /etc/calamares/settings.conf, find the `show:`
+sequence, and update the anchor/regex in
+config/hooks/live/030-fanne-calamares-extras.hook.chroot to match its
+current shape.
+EOF
+    exit 1
+fi
+
+sed -i -E 's/^([[:space:]]*)-([[:space:]]*)summary([[:space:]]*)$/\1-\2packagechooser\3\n&/' "$SETTINGS"
+
+# Sanity check: the packages job module (which actually applies the
+# packagechooser's picks) must also be present, or the selection screen
+# would just be decorative.
+if ! grep -qE '^[[:space:]]*-[[:space:]]*packages[[:space:]]*$' "$SETTINGS"; then
+    cat >&2 <<'EOF'
+"packagechooser" was added to settings.conf, but no "- packages" job was
+found in the exec sequence to apply the selection. Without it, picks made
+on the extras screen would be silently ignored.
+
+Fix: add a "packages" entry to the `exec:` sequence in
+/etc/calamares/settings.conf (see the packages module docs), or adjust
+this hook if calamares-settings-debian already applies package operations
+under a different module name.
+EOF
+    exit 1
+fi

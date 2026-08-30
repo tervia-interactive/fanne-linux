@@ -8,11 +8,20 @@ REPOSITORY_ROOT=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)
 
 FANNE_VOLUME_ID=$(printf '%s' "FANNE_${FANNE_CODENAME}_${FANNE_VERSION}" | tr '[:lower:].' '[:upper:]_')
 
+# NOTE: --archive-areas assumes Devuan Ceres mirrors the Debian Sid split of
+# non-free-firmware out of non-free. If a `make check`/build fails to find
+# a package, first check `apt-cache policy` against deb.devuan.org/merged
+# and adjust this list before touching anything else.
 lb config noauto \
-    --mode debian \
-    --distribution sid \
-    --architectures amd64 \
+    --mode devuan \
+    --distribution ceres \
     --archive-areas "main contrib non-free-firmware" \
+    --mirror-bootstrap "https://deb.devuan.org/merged/" \
+    --mirror-chroot "https://deb.devuan.org/merged/" \
+    --mirror-binary "https://deb.devuan.org/merged/" \
+    --keyring-packages devuan-keyring \
+    --debootstrap-options "--variant=minbase" \
+    --architectures amd64 \
     --security false \
     --updates false \
     --backports false \

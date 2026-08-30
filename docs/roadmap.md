@@ -6,6 +6,8 @@
 - [x] Add an AMD64 XFCE package profile.
 - [x] Add Fanne system identity and English defaults.
 - [x] Add local validation and continuous integration.
+- [x] Rebase the image on Devuan Ceres (sysvinit) instead of Debian Sid.
+- [x] Trim the live image to a minimal base with opt-in extras in Calamares.
 - [ ] Produce and boot-test the first development ISO.
 - [ ] Verify Calamares installation on BIOS and UEFI virtual machines.
 

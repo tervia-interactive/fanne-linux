@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Install Fanne Linux
+GenericName=System Installer
+Comment=Install Fanne Linux on this computer
+Exec=install-debian
+Icon=calamares
+Terminal=false
+Categories=System;
+Keywords=install;installer;system;

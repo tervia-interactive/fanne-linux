@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Fanne Linux Installer Shortcut
+Exec=sh -c 'mkdir -p "$HOME/Desktop" && cp /usr/share/applications/fanne-installer.desktop "$HOME/Desktop/Install Fanne Linux.desktop" && chmod +x "$HOME/Desktop/Install Fanne Linux.desktop"'
+OnlyShowIn=XFCE;
+NoDisplay=true
+X-GNOME-Autostart-enabled=true

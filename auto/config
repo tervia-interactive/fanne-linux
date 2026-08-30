@@ -1,0 +1,19 @@
+#!/bin/sh
+
+set -eu
+
+lb config noauto \
+    --mode debian \
+    --distribution trixie \
+    --architectures amd64 \
+    --archive-areas "main contrib non-free-firmware" \
+    --binary-images iso-hybrid \
+    --bootloaders "syslinux,grub-efi" \
+    --debian-installer live \
+    --debian-installer-gui true \
+    --image-name fanne-linux \
+    --iso-application "Fanne Linux" \
+    --iso-publisher "Tervia Interactive" \
+    --iso-volume "FANNE_LIVE" \
+    --bootappend-live "boot=live components username=fanne hostname=fanne locales=en_US.UTF-8 keyboard-layouts=us timezone=UTC" \
+    "${@}"

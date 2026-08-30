@@ -1,0 +1,52 @@
+# Fanne Linux desktop
+task-xfce-desktop
+xfce4-goodies
+lightdm
+lightdm-gtk-greeter
+
+# Live environment and graphical installer
+live-boot
+live-config
+live-config-systemd
+calamares
+calamares-settings-debian
+
+# Hardware, networking, and audio
+network-manager
+network-manager-gnome
+pipewire
+pipewire-audio
+wireplumber
+pavucontrol
+blueman
+fwupd
+firmware-linux-free
+firmware-amd-graphics
+firmware-iwlwifi
+firmware-realtek
+
+# Desktop applications
+firefox-esr
+libreoffice
+mousepad
+ristretto
+parole
+thunar-archive-plugin
+file-roller
+gparted
+flatpak
+
+# System utilities
+sudo
+curl
+wget
+git
+htop
+inxi
+rsync
+dosfstools
+exfatprogs
+ntfs-3g
+fonts-noto-core
+fonts-noto-color-emoji
+locales

@@ -1,0 +1,16 @@
+#!/bin/sh
+
+set -eu
+
+REPOSITORY_ROOT=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)
+cd "$REPOSITORY_ROOT"
+
+if command -v lb >/dev/null 2>&1 && [ -f .buildconfig ]; then
+    lb clean --purge
+fi
+
+rm -f fanne-linux-amd64.hybrid.iso fanne-linux-amd64.hybrid.iso.zsync
+rm -f fanne-linux-amd64.contents fanne-linux-amd64.packages fanne-linux-amd64.files
+rm -f binary.hybrid.iso binary.hybrid.iso.zsync binary.contents binary.packages binary.files
+
+echo 'Generated live-build state removed.'

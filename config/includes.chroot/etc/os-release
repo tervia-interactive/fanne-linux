@@ -1,0 +1,10 @@
+PRETTY_NAME="Fanne Linux (Development)"
+NAME="Fanne Linux"
+VERSION_ID="0.1-dev"
+VERSION="0.1 Development"
+VERSION_CODENAME="trixie"
+ID=fanne
+ID_LIKE=debian
+HOME_URL="https://github.com/tervia-interactive/fanne-linux"
+SUPPORT_URL="https://github.com/tervia-interactive/fanne-linux/issues"
+BUG_REPORT_URL="https://github.com/tervia-interactive/fanne-linux/issues"

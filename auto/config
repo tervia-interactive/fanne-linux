@@ -13,6 +13,12 @@ set -e
 # Usage: run `lb config` from the repository root; live-build sources this
 # file automatically. Do not call this script directly.
 
+REPOSITORY_ROOT=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)
+# shellcheck source=../version
+. "$REPOSITORY_ROOT/version"
+
+FANNE_VOLUME_ID=$(printf '%s' "FANNE_${FANNE_CODENAME}_${FANNE_VERSION}" | tr '[:lower:].' '[:upper:]_')
+
 MIRROR="http://pkgmaster.devuan.org/merged"
 ARCHITECTURE="amd64"
 # non-free-firmware carries firmware-amd-graphics, firmware-iwlwifi,
@@ -45,19 +51,19 @@ lb config noauto \
     --security false \
     --updates false \
     --apt-indices false \
-    --apt-recommends false \
     --apt-source-archives false \
     \
     --binary-images iso-hybrid \
-    --bootloaders "grub-pc grub-efi" \
+    --bootloaders "grub-pc,grub-efi" \
     --uefi-secure-boot disable \
     --debian-installer none \
     \
     --linux-packages "linux-image" \
     --memtest none \
     \
-    --iso-application "Fanne Linux" \
+    --iso-application "Fanne Linux ${FANNE_CODENAME} ${FANNE_VERSION}" \
     --iso-publisher "Tervia Interactive" \
-    --iso-volume "Fanne Linux" \
+    --iso-volume "$FANNE_VOLUME_ID" \
+    --bootappend-live "boot=live components username=fanne user-fullname=Fanne hostname=fanne locales=en_US.UTF-8 keyboard-layouts=us timezone=UTC" \
     \
     "${@}"

@@ -31,6 +31,7 @@ lb config noauto \
     --architectures "${ARCHITECTURE}" \
     --archive-areas "${ARCHIVE_AREAS}" \
     --initsystem sysvinit \
+    --image-name fanne-linux \
     \
     --parent-mirror-bootstrap "${MIRROR}" \
     --mirror-bootstrap "${MIRROR}" \

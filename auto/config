@@ -14,13 +14,16 @@ set -e
 # file automatically. Do not call this script directly.
 
 MIRROR="http://deb.devuan.org/merged"
-DISTRIBUTION="ceres"          # Devuan's unstable, tracks Debian Sid
 ARCHITECTURE="amd64"
 ARCHIVE_AREAS="main"          # Devuan's merged pool has no non-free-firmware
 
+# NOTE: --distribution ceres is written literally (not via a variable).
+# scripts/check.sh greps auto/config for the literal string
+# "--distribution ceres" to confirm this image targets Devuan Ceres —
+# keep it inline here rather than reintroducing a DISTRIBUTION variable.
 lb config noauto \
     --mode devuan \
-    --distribution "${DISTRIBUTION}" \
+    --distribution ceres \
     --architectures "${ARCHITECTURE}" \
     --archive-areas "${ARCHIVE_AREAS}" \
     \

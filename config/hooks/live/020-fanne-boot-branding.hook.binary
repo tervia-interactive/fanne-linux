@@ -2,8 +2,6 @@
 
 set -eu
 
-SPLASH='config/bootloaders/fanne-splash.png'
-
 # Current live-build releases run binary hooks from inside the binary tree,
 # while older releases run them from the project root.
 if [ -d binary ]; then
@@ -11,6 +9,8 @@ if [ -d binary ]; then
 else
     BINARY_ROOT='.'
 fi
+
+SPLASH="$BINARY_ROOT/fanne-splash.png"
 
 for target in \
     "$BINARY_ROOT/isolinux/splash.png" \
@@ -21,6 +21,8 @@ do
         cp "$SPLASH" "$target"
     fi
 done
+
+rm -f "$SPLASH"
 
 # Remove upstream distribution names from generated BIOS and UEFI menus.
 find "$BINARY_ROOT" -type f \( -name '*.cfg' -o -name '*.txt' \) -exec \

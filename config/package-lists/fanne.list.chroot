@@ -15,7 +15,8 @@ plymouth-themes
 
 # Hardware, networking, and audio
 network-manager
-network-manager-gnome
+network-manager-applet
+nm-connection-editor
 pipewire
 pipewire-audio
 wireplumber

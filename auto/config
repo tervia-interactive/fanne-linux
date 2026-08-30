@@ -15,7 +15,11 @@ set -e
 
 MIRROR="http://deb.devuan.org/merged"
 ARCHITECTURE="amd64"
-ARCHIVE_AREAS="main"          # Devuan's merged pool has no non-free-firmware
+# non-free-firmware carries firmware-amd-graphics, firmware-iwlwifi,
+# firmware-realtek, etc. — it does exist on Devuan's merged mirror
+# (deb.devuan.org/merged ceres main contrib non-free non-free-firmware),
+# an earlier comment here claiming otherwise was wrong.
+ARCHIVE_AREAS="main non-free-firmware"
 
 # NOTE: --distribution ceres is written literally (not via a variable).
 # scripts/check.sh greps auto/config for the literal string
@@ -26,6 +30,7 @@ lb config noauto \
     --distribution ceres \
     --architectures "${ARCHITECTURE}" \
     --archive-areas "${ARCHIVE_AREAS}" \
+    --initsystem sysvinit \
     \
     --parent-mirror-bootstrap "${MIRROR}" \
     --mirror-bootstrap "${MIRROR}" \

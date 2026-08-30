@@ -18,6 +18,12 @@ libpam-elogind
 # Live environment and graphical installer
 live-boot
 live-config
+# Pulled in for free by tasksel/task-desktop on Debian, but not by
+# task-xfce-desktop on Devuan Ceres. live-config's 0030-user-setup
+# component requires this package to actually create the live user;
+# without it, it silently exits early (pkg_is_installed check fails)
+# and sudo/LightDM autologin break for lack of a 'user' account.
+user-setup
 calamares
 calamares-settings-debian
 plymouth

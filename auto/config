@@ -33,28 +33,30 @@ ARCHIVE_AREAS="main contrib non-free-firmware"
 # scripts/check.sh greps auto/config for the literal string
 # "--distribution ceres" to confirm this image targets Devuan Ceres —
 # keep it inline here rather than reintroducing a DISTRIBUTION variable.
-# cron-daemon-common is part of debootstrap's own base package set (it
-# lands in the chroot before config/package-lists is even consulted) and
-# depends on "systemd | systemd-standalone-sysusers | systemd-sysusers" to
-# process sysusers.d entries. On a sysvinit image we obviously can't
-# satisfy that with systemd itself, so we need systemd-standalone-sysusers
-# pulled in at bootstrap time (live-build has no dedicated --bootstrap-
-# include flag; --include= below passes debootstrap's own flag straight
-# through).
+# cron-daemon-common is part of debootstrap's default "important"-priority
+# package set (it lands in the chroot before config/package-lists is even
+# consulted) and depends on "systemd | systemd-standalone-sysusers |
+# systemd-sysusers" to process sysusers.d entries. On a sysvinit image we
+# obviously can't satisfy that with systemd itself.
 #
-# --include= alone isn't enough, though: debootstrap installs its base
-# package set in a fixed sequence, not a real dependency-resolved order,
-# so cron-daemon-common's configure step can run before
-# systemd-standalone-sysusers has been configured, and dpkg fails with
-# "dependency problems prevent configuration of cron-daemon-common" even
-# though the package it needs is right there in the same batch (a known
-# debootstrap limitation with alternative "X | Y | Z" depends — see
-# https://dev1galaxy.org/viewtopic.php?id=6340). So we additionally
-# --exclude=cron,cron-daemon-common from debootstrap's base install, and
-# add "cron" to config/package-lists/fanne.list.chroot instead: live-build
-# installs that list with a normal apt-get, which does real dependency
-# resolution and runs after systemd-standalone-sysusers is already
-# configured in the chroot.
+# We first tried fixing this with --include=systemd-standalone-sysusers
+# plus --exclude=cron,cron-daemon-common, but --exclude doesn't reliably
+# stick: debootstrap's own auto dependency resolution (resolve_deps) can
+# pull an excluded package straight back in to satisfy some other included
+# package's dependency, ignoring the exclude list — a long-standing,
+# never-fully-fixed debootstrap limitation (Debian bug #774751). That's
+# why cron-daemon-common kept reappearing even with --exclude set.
+#
+# The reliable fix is --variant=minbase: it makes debootstrap install only
+# essential/required packages, so cron/cron-daemon-common (both merely
+# "important" priority, not required) are never pulled in at bootstrap
+# time at all — there's nothing for resolve_deps to re-add. Everything
+# else the image needs, including cron, is installed afterwards by
+# live-build's normal apt-get pass over config/package-lists (see "cron"
+# in fanne.list.chroot), which does real dependency resolution and runs
+# only once systemd-standalone-sysusers is already configured in the
+# chroot — see https://dev1galaxy.org/viewtopic.php?id=6340 for others
+# hitting and working around the same debootstrap/Devuan Ceres issue.
 lb config noauto \
     --mode devuan \
     --distribution ceres \
@@ -62,7 +64,7 @@ lb config noauto \
     --archive-areas "${ARCHIVE_AREAS}" \
     --initsystem sysvinit \
     --image-name fanne-linux \
-    --debootstrap-options "--include=systemd-standalone-sysusers --exclude=cron,cron-daemon-common" \
+    --debootstrap-options "--variant=minbase --include=systemd-standalone-sysusers" \
     \
     --parent-mirror-bootstrap "${MIRROR}" \
     --mirror-bootstrap "${MIRROR}" \

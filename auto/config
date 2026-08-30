@@ -33,6 +33,14 @@ ARCHIVE_AREAS="main contrib non-free-firmware"
 # scripts/check.sh greps auto/config for the literal string
 # "--distribution ceres" to confirm this image targets Devuan Ceres —
 # keep it inline here rather than reintroducing a DISTRIBUTION variable.
+# cron-daemon-common is part of debootstrap's own base package set (it
+# lands in the chroot before config/package-lists is even consulted) and
+# depends on "systemd | systemd-standalone-sysusers | systemd-sysusers" to
+# process sysusers.d entries. On a sysvinit image we obviously can't
+# satisfy that with systemd itself, so pull in the standalone alternative
+# at bootstrap time via --bootstrap-include below -- without it,
+# debootstrap fails outright with "dependency problems prevent
+# configuration of cron-daemon-common".
 lb config noauto \
     --mode devuan \
     --distribution ceres \
@@ -40,6 +48,7 @@ lb config noauto \
     --archive-areas "${ARCHIVE_AREAS}" \
     --initsystem sysvinit \
     --image-name fanne-linux \
+    --bootstrap-include "systemd-standalone-sysusers" \
     \
     --parent-mirror-bootstrap "${MIRROR}" \
     --mirror-bootstrap "${MIRROR}" \

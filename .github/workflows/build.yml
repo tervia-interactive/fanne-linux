@@ -41,8 +41,8 @@ jobs:
           docker run --rm --privileged \
             --volume "$GITHUB_WORKSPACE:/work" \
             --workdir /work \
-            devuan/devuan:ceres \
-            sh -ec 'apt-get update && apt-get install --yes ca-certificates git live-build make debootstrap xorriso squashfs-tools devuan-keyring && make iso'
+            debian:sid-slim \
+            sh -ec 'apt-get update && apt-get install --yes ca-certificates git live-build make debootstrap xorriso squashfs-tools && make iso'
       - name: Upload development image
         uses: actions/upload-artifact@v4
         with:

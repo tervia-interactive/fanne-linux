@@ -1,17 +1,6 @@
 #!/bin/sh
-set -e
 
-# Fanne Linux — auto/config
-#
-# This script is the single source of truth for how `lb config` is invoked.
-# It replaces an implicit/default `--mode debian` invocation (which produced
-# a malformed /etc/apt/sources.list when combined with a Devuan mirror and
-# the "ceres" suite) with an explicit Devuan configuration, matching what
-# docs/architecture.md describes: Fanne Linux is a Devuan Ceres derivative
-# (sysvinit + elogind), not a Debian Sid image.
-#
-# Usage: run `lb config` from the repository root; live-build sources this
-# file automatically. Do not call this script directly.
+set -eu
 
 REPOSITORY_ROOT=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)
 # shellcheck source=../version
@@ -19,76 +8,21 @@ REPOSITORY_ROOT=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)
 
 FANNE_VOLUME_ID=$(printf '%s' "FANNE_${FANNE_CODENAME}_${FANNE_VERSION}" | tr '[:lower:].' '[:upper:]_')
 
-MIRROR="http://pkgmaster.devuan.org/merged"
-ARCHITECTURE="amd64"
-# non-free-firmware carries firmware-amd-graphics, firmware-iwlwifi,
-# firmware-realtek, etc. — it does exist on Devuan's merged mirror
-# (deb.devuan.org/merged ceres main contrib non-free non-free-firmware),
-# an earlier comment here claiming otherwise was wrong.
-# contrib is needed for virtualbox-guest-x11 (VirtualBox Guest Additions
-# packages live there upstream, same as on Debian).
-ARCHIVE_AREAS="main contrib non-free-firmware"
-
-# NOTE: --distribution ceres is written literally (not via a variable).
-# scripts/check.sh greps auto/config for the literal string
-# "--distribution ceres" to confirm this image targets Devuan Ceres —
-# keep it inline here rather than reintroducing a DISTRIBUTION variable.
-# cron-daemon-common is part of debootstrap's default "important"-priority
-# package set (it lands in the chroot before config/package-lists is even
-# consulted) and depends on "systemd | systemd-standalone-sysusers |
-# systemd-sysusers" to process sysusers.d entries. On a sysvinit image we
-# obviously can't satisfy that with systemd itself.
-#
-# We first tried fixing this with --include=systemd-standalone-sysusers
-# plus --exclude=cron,cron-daemon-common, but --exclude doesn't reliably
-# stick: debootstrap's own auto dependency resolution (resolve_deps) can
-# pull an excluded package straight back in to satisfy some other included
-# package's dependency, ignoring the exclude list — a long-standing,
-# never-fully-fixed debootstrap limitation (Debian bug #774751). That's
-# why cron-daemon-common kept reappearing even with --exclude set.
-#
-# The reliable fix is --variant=minbase: it makes debootstrap install only
-# essential/required packages, so cron/cron-daemon-common (both merely
-# "important" priority, not required) are never pulled in at bootstrap
-# time at all — there's nothing for resolve_deps to re-add. Everything
-# else the image needs, including cron, is installed afterwards by
-# live-build's normal apt-get pass over config/package-lists (see "cron"
-# in fanne.list.chroot), which does real dependency resolution and runs
-# only once systemd-standalone-sysusers is already configured in the
-# chroot — see https://dev1galaxy.org/viewtopic.php?id=6340 for others
-# hitting and working around the same debootstrap/Devuan Ceres issue.
 lb config noauto \
-    --mode devuan \
-    --distribution ceres \
-    --architectures "${ARCHITECTURE}" \
-    --archive-areas "${ARCHIVE_AREAS}" \
-    --initsystem sysvinit \
-    --image-name fanne-linux \
-    --debootstrap-options "--variant=minbase --include=systemd-standalone-sysusers" \
-    \
-    --parent-mirror-bootstrap "${MIRROR}" \
-    --mirror-bootstrap "${MIRROR}" \
-    --parent-mirror-chroot "${MIRROR}" \
-    --mirror-chroot "${MIRROR}" \
-    --parent-mirror-binary "${MIRROR}" \
-    --mirror-binary "${MIRROR}" \
-    \
+    --mode debian \
+    --distribution sid \
+    --architectures amd64 \
+    --archive-areas "main contrib non-free-firmware" \
     --security false \
     --updates false \
-    --apt-indices false \
-    --apt-source-archives false \
-    \
+    --backports false \
+    --cache false \
     --binary-images iso-hybrid \
-    --bootloaders "grub-pc,grub-efi" \
-    --uefi-secure-boot disable \
+    --bootloaders "syslinux,grub-efi" \
     --debian-installer none \
-    \
-    --linux-packages "linux-image" \
-    --memtest none \
-    \
+    --image-name fanne-linux \
     --iso-application "Fanne Linux ${FANNE_CODENAME} ${FANNE_VERSION}" \
     --iso-publisher "Tervia Interactive" \
     --iso-volume "$FANNE_VOLUME_ID" \
     --bootappend-live "boot=live components username=fanne user-fullname=Fanne hostname=fanne locales=en_US.UTF-8 keyboard-layouts=us timezone=UTC" \
-    \
     "${@}"

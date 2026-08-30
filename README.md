@@ -2,8 +2,8 @@
 
 ![Fanne Linux](assets/branding/fanne-logo-black.png)
 
-Fanne Linux is a rolling desktop-focused Linux distribution built on Devuan
-Ceres.
+Fanne Linux is a rolling desktop-focused Linux distribution built from Debian
+Unstable.
 The project aims to provide a polished, dependable system that remains easy to
 understand, rebuild, and modify.
 
@@ -13,8 +13,7 @@ understand, rebuild, and modify.
 
 ## Current foundation
 
-- Devuan Ceres (unstable) rolling base, tracking Debian Sid without systemd
-- sysvinit, with elogind standing in for systemd-logind
+- Debian Unstable (Sid) rolling base
 - XFCE desktop
 - Hybrid BIOS/UEFI live ISO for AMD64 computers
 - Fanne-branded Calamares graphical installer
@@ -25,7 +24,7 @@ understand, rebuild, and modify.
 
 ## Build an image
 
-Building requires a Devuan Ceres host or container with `live-build`, `make`,
+Building requires a Debian Sid host or container with `live-build`, `make`,
 `debootstrap`, and `xorriso` installed.
 
 ```sh
@@ -53,5 +52,5 @@ opening a pull request.
 ## License
 
 Repository-owned source code and configuration are licensed under the
-[Apache License 2.0](LICENSE). Included Debian and Devuan packages keep their
-respective upstream licenses.
+[Apache License 2.0](LICENSE). Included Debian packages keep their respective
+upstream licenses.

@@ -10,8 +10,6 @@ version
 config/package-lists/fanne.list.chroot
 config/hooks/live/010-fanne-system.hook.chroot
 config/hooks/live/020-fanne-boot-branding.hook.binary
-config/hooks/live/090-fanne-debloat.hook.chroot
-config/includes.chroot/etc/calamares/modules/packagechooser.conf
 config/includes.chroot/etc/os-release
 config/includes.chroot/etc/issue
 config/includes.chroot/etc/calamares/branding/fanne/branding.desc
@@ -27,7 +25,7 @@ for path in $required_files; do
     fi
 done
 
-for script in auto/config version config/hooks/live/010-fanne-system.hook.chroot config/hooks/live/090-fanne-debloat.hook.chroot config/hooks/live/030-fanne-calamares-extras.hook.chroot scripts/build.sh scripts/clean.sh scripts/check.sh; do
+for script in auto/config version config/hooks/live/010-fanne-system.hook.chroot scripts/build.sh scripts/clean.sh scripts/check.sh; do
     sh -n "$script"
 done
 
@@ -39,13 +37,8 @@ if ! (. ./version && [ -n "${FANNE_VERSION:-}" ] && [ -n "${FANNE_CODENAME:-}" ]
     exit 1
 fi
 
-if ! grep -q -- '--mode devuan' auto/config || ! grep -q -- '--distribution ceres' auto/config; then
-    echo 'The image is not configured to use Devuan Ceres.' >&2
-    exit 1
-fi
-
-if grep -q -- 'live-config-systemd' config/package-lists/fanne.list.chroot; then
-    echo 'live-config-systemd is still listed; this image uses sysvinit.' >&2
+if ! grep -q -- '--distribution sid' auto/config; then
+    echo 'The image is not configured to use Debian Sid.' >&2
     exit 1
 fi
 

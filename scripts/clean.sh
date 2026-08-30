@@ -5,14 +5,9 @@ set -eu
 REPOSITORY_ROOT=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)
 cd "$REPOSITORY_ROOT"
 
-# Don't gate this on `lb clean --purge` or a .buildconfig marker: this repo's
-# live-build version tracks state in .build/, not .buildconfig, so that
-# marker is never present and `lb clean` never actually ran. Remove every
-# live-build generated directory directly instead, so a previous run (even
-# one that was interrupted, e.g. mid-debootstrap) never leaves stale files
-# behind that make the next `tar` extraction fail with "File exists".
-rm -rf .build .stage binary cache chroot local
-rm -f .buildconfig auto/build auto/clean auto/config.old
+if command -v lb >/dev/null 2>&1 && [ -f .buildconfig ]; then
+    lb clean --purge
+fi
 
 rm -f fanne-linux-amd64.hybrid.iso fanne-linux-amd64.hybrid.iso.zsync
 rm -f fanne-linux-amd64.contents fanne-linux-amd64.packages fanne-linux-amd64.files

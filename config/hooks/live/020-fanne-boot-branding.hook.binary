@@ -33,4 +33,14 @@ find "$BINARY_ROOT" -type f \( -name '*.cfg' -o -name '*.txt' \) -exec \
         {} +
 
 mkdir -p "$BINARY_ROOT/.disk"
-printf '%s\n' 'Fanne Linux Unstable - Official AMD64 Live Image' > "$BINARY_ROOT/.disk/info"
+printf '%s\n' "Fanne Linux ${FANNE_CODENAME:-Unstable} ${FANNE_VERSION:-} - Official AMD64 Live Image" > "$BINARY_ROOT/.disk/info"
+
+# Show our own codename/version where live-build's isolinux menu prints its
+# generic "Boot menu" title, instead of a separate line on the splash image
+# (which used to collide with the vesamenu title box at that same position).
+if [ -n "${FANNE_CODENAME:-}" ] && [ -n "${FANNE_VERSION:-}" ]; then
+    find "$BINARY_ROOT" -type f -name '*.cfg' -exec \
+        sed -i \
+            -E "s/^([[:space:]]*[Mm][Ee][Nn][Uu][[:space:]]+[Tt][Ii][Tt][Ll][Ee][[:space:]]+)Boot menu\$/\\1Fanne Linux ${FANNE_CODENAME} ${FANNE_VERSION}/" \
+            {} +
+fi

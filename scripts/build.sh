@@ -19,6 +19,7 @@ cd "$REPOSITORY_ROOT"
 
 # shellcheck source=../version
 . ./version
+export FANNE_VERSION FANNE_CODENAME
 
 export SOURCE_DATE_EPOCH="${SOURCE_DATE_EPOCH:-$(git log -1 --format=%ct 2>/dev/null || date +%s)}"
 

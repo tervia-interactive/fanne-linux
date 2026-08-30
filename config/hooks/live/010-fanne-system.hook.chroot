@@ -4,6 +4,23 @@ set -eu
 
 printf '%s\n' 'fanne' > /etc/hostname
 
+# sysvinit's default "makefile-style concurrent boot" (CONCURRENCY=makefile
+# in /etc/default/rcS) runs rcS scripts in parallel based on their LSB
+# dependency headers. live-config's components (debconf -> hostname ->
+# user-setup -> sudo -> ...) rely on running as one strictly sequential
+# script, but on Devuan this concurrency has been observed to race against
+# live-boot still assembling the writable overlay, silently skipping
+# user-setup: sudo then fails with "user 'user' does not exist" and the
+# live user is never created, breaking LightDM/autologin. Force classic
+# serial boot to remove that race entirely.
+if [ -f /etc/default/rcS ]; then
+    if grep -q '^CONCURRENCY=' /etc/default/rcS; then
+        sed -i 's/^CONCURRENCY=.*/CONCURRENCY=none/' /etc/default/rcS
+    else
+        printf '%s\n' 'CONCURRENCY=none' >> /etc/default/rcS
+    fi
+fi
+
 if [ -f /etc/os-release ] && [ ! /etc/os-release -ef /usr/lib/os-release ]; then
     cp /etc/os-release /usr/lib/os-release
 fi

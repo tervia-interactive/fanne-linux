@@ -18,5 +18,5 @@ lb config noauto \
     --iso-application "Fanne Linux Unstable" \
     --iso-publisher "Tervia Interactive" \
     --iso-volume "FANNE_UNSTABLE" \
-    --bootappend-live "boot=live components username=fanne hostname=fanne locales=en_US.UTF-8 keyboard-layouts=us timezone=UTC" \
+    --bootappend-live "boot=live components username=fanne user-fullname=Fanne hostname=fanne locales=en_US.UTF-8 keyboard-layouts=us timezone=UTC" \
     "${@}"

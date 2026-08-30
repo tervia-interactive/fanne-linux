@@ -51,7 +51,17 @@ firmware-realtek
 # they're harmless no-ops on real hardware and on the "wrong" hypervisor.
 # Shipping all three unconditionally is what lets one image behave well
 # in VirtualBox, VMware, and QEMU/KVM without a rebuild per target.
-virtualbox-guest-x11
+#
+# NOTE: virtualbox-guest-x11 (not virtualbox-guest-utils) was tried first
+# and caused a corrupted/frozen display regardless of which video
+# controller (VBoxVGA/VBoxSVGA/VMSVGA) the VM used. That package ships the
+# legacy Xorg vboxvideo driver, which fights with the in-kernel KMS
+# vboxvideo driver Debian/Devuan kernels already ship — a well-known
+# source of exactly that symptom. virtualbox-guest-utils still gives
+# clipboard/seamless-mode/session integration via VBoxClient without
+# forcing that legacy driver; Xorg falls back to the modern
+# modesetting/KMS path instead.
+virtualbox-guest-utils
 open-vm-tools
 open-vm-tools-desktop
 qemu-guest-agent

@@ -19,7 +19,9 @@ ARCHITECTURE="amd64"
 # firmware-realtek, etc. — it does exist on Devuan's merged mirror
 # (deb.devuan.org/merged ceres main contrib non-free non-free-firmware),
 # an earlier comment here claiming otherwise was wrong.
-ARCHIVE_AREAS="main non-free-firmware"
+# contrib is needed for virtualbox-guest-x11 (VirtualBox Guest Additions
+# packages live there upstream, same as on Debian).
+ARCHIVE_AREAS="main contrib non-free-firmware"
 
 # NOTE: --distribution ceres is written literally (not via a variable).
 # scripts/check.sh greps auto/config for the literal string

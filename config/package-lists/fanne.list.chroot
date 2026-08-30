@@ -40,6 +40,17 @@ firmware-amd-graphics
 firmware-iwlwifi
 firmware-realtek
 
+# Virtual machine guest integration. Each of these only activates itself
+# when it detects its matching hypervisor (DMI/PCI probing at boot), so
+# they're harmless no-ops on real hardware and on the "wrong" hypervisor.
+# Shipping all three unconditionally is what lets one image behave well
+# in VirtualBox, VMware, and QEMU/KVM without a rebuild per target.
+virtualbox-guest-x11
+open-vm-tools
+open-vm-tools-desktop
+qemu-guest-agent
+spice-vdagent
+
 # Desktop applications
 # LibreOffice, GParted, Bluetooth (blueman), and extra media apps (ristretto,
 # parole) are NOT installed here on purpose — they're multi-hundred-MB to

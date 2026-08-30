@@ -28,15 +28,17 @@ jobs:
     runs-on: ubuntu-24.04
     needs: validate
     timeout-minutes: 120
+    container:
+      image: debian:trixie-slim
     steps:
+      - name: Prepare Debian build environment
+        run: |
+          apt-get update
+          apt-get install --yes ca-certificates git live-build make debootstrap xorriso squashfs-tools
       - name: Check out source
         uses: actions/checkout@v4
-      - name: Install build dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install --yes live-build debootstrap xorriso squashfs-tools
       - name: Build ISO
-        run: sudo make iso
+        run: make iso
       - name: Upload development image
         uses: actions/upload-artifact@v4
         with:

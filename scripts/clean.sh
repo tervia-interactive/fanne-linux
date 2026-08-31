@@ -5,7 +5,7 @@ set -eu
 REPOSITORY_ROOT=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)
 cd "$REPOSITORY_ROOT"
 
-if command -v lb >/dev/null 2>&1 && [ -f .buildconfig ]; then
+if command -v lb >/dev/null 2>&1; then
     lb clean --purge
 fi
 

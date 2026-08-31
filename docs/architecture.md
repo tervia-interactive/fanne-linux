@@ -43,3 +43,5 @@ repeatable installation and update test matrix.
 - Defaults should be useful without preventing users from changing them.
 - Upstream security updates should arrive through Debian whenever possible.
 - The live session and installed system must use English by default.
+- APT Recommends are off by default; a package only ships if it's listed
+  explicitly or something else genuinely depends on it.

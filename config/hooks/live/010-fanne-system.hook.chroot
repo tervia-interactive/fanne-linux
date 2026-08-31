@@ -72,3 +72,11 @@ gtk-update-icon-cache -f /usr/share/icons/hicolor 2>/dev/null || true
 
 systemctl enable NetworkManager.service
 systemctl enable lightdm.service
+
+# Debloat: these run periodic background apt/fwupd network and disk activity
+# that isn't worth it on a live medium and is easy to trigger manually when
+# actually wanted. Masking (not just disabling) also blocks other units from
+# pulling them back in as a dependency.
+for unit in apt-daily.timer apt-daily-upgrade.timer fwupd-refresh.timer; do
+    systemctl mask "$unit" 2>/dev/null || true
+done

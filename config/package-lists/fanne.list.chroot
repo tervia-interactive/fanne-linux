@@ -1,6 +1,9 @@
 # Fanne Linux desktop
-task-xfce-desktop
-xfce4-goodies
+xfce4
+xfce4-power-manager
+xfce4-terminal
+xfce4-notifyd
+light-locker
 lightdm
 lightdm-gtk-greeter
 
@@ -11,7 +14,6 @@ live-config-systemd
 calamares
 calamares-settings-debian
 plymouth
-plymouth-themes
 
 # Hardware, networking, and audio
 network-manager
@@ -28,14 +30,23 @@ firmware-amd-graphics
 firmware-iwlwifi
 firmware-realtek
 
+# Removable media, permissions, and default folders
+# (installed explicitly: --apt-recommends is off, and the desktop
+# depends on all of these actually working, not just being present)
+gvfs
+gvfs-backends
+udisks2
+policykit-1
+xdg-user-dirs
+xdg-utils
+
 # Desktop applications
 firefox-esr
-libreoffice
 mousepad
 ristretto
 parole
 thunar-archive-plugin
-file-roller
+xarchiver
 gparted
 flatpak
 

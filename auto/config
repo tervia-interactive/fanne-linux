@@ -20,6 +20,7 @@ lb config noauto \
     --binary-images iso-hybrid \
     --bootloaders "syslinux,grub-efi" \
     --debian-installer none \
+    --apt-recommends false \
     --image-name fanne-linux \
     --iso-application "Fanne Linux ${FANNE_CODENAME} ${FANNE_VERSION}" \
     --iso-publisher "Tervia Interactive" \

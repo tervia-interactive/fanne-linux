@@ -36,7 +36,9 @@ firmware-realtek
 gvfs
 gvfs-backends
 udisks2
-policykit-1
+polkitd
+pkexec
+xfce-polkit
 xdg-user-dirs
 xdg-utils
 
